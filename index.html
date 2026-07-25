@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Uneven Fawn Anemometer — Stanardsville, VA</title>
+<title>Three Acre Wood — Stanardsville, VA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
@@ -87,6 +87,14 @@
   }
 
   .status .updated { color: var(--text-dim); margin-top: 4px; }
+
+  .temp-secondary {
+    font-size: 0.32em;
+    color: var(--text-dim);
+    font-weight: 400;
+    margin-left: 10px;
+    vertical-align: middle;
+  }
 
   /* Instrument panel */
   .panel {
@@ -186,221 +194,4 @@
     border-top: 1px solid var(--hairline);
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color: var(--text-faint);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  #loadError {
-    display: none;
-    background: var(--panel-inset);
-    border: 1px solid var(--hairline);
-    border-radius: 6px;
-    padding: 20px;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 13px;
-    color: var(--text-dim);
-    line-height: 1.6;
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
-
-  <header>
-    <div>
-      <p class="eyebrow">Personal weather station · WeatherXM M5</p>
-      <h1>Stanardsville, Virginia</h1>
-      <p class="location-sub">38.32°N, 78.48°W · Greene County · Blue Ridge foothills</p>
-    </div>
-    <div class="status">
-      <div><span class="dot"></span>Station online</div>
-      <div class="updated" id="lastUpdated">Loading last reading…</div>
-    </div>
-  </header>
-
-  <div id="loadError">
-    Couldn't load <code>weatherxm_data.csv</code>. If you're viewing this file
-    directly from your Desktop, that's expected — browsers block local file
-    loading for security. Open the published GitHub Pages link instead, and
-    make sure <code>weatherxm_data.csv</code> is sitting in the same folder
-    as this page in your repository.
-  </div>
-
-  <div class="panel" id="panel" style="display:none;">
-    <div class="readout-main">
-      <div class="temp-big" id="tempBig">--<span class="temp-unit">°C</span></div>
-      <div class="condition-block">
-        <div class="cond" id="condLabel">—</div>
-        <div class="feels" id="feelsLike">feels like —°C</div>
-      </div>
-    </div>
-    <div class="readout-grid" id="readoutGrid"></div>
-  </div>
-
-  <section class="history">
-    <div class="section-head">
-      <h2>Field trace</h2>
-      <p>Hourly readings pulled from the station's own record</p>
-    </div>
-
-    <div class="chart-card">
-      <h3>Temperature &amp; dew point (°C)</h3>
-      <canvas id="chartTemp"></canvas>
-    </div>
-
-    <div class="chart-card">
-      <h3>Humidity (%)</h3>
-      <canvas id="chartHumidity"></canvas>
-    </div>
-
-    <div class="chart-card">
-      <h3>Wind speed &amp; gust (m/s)</h3>
-      <canvas id="chartWind"></canvas>
-    </div>
-
-    <div class="chart-card">
-      <h3>Barometric pressure (hPa)</h3>
-      <canvas id="chartPressure"></canvas>
-    </div>
-  </section>
-
-  <footer>
-    <span>Uneven Fawn Anemometer · Model M5 · claimed Aug 2023</span>
-    <span>Data via WeatherXM · updated manually from station export</span>
-  </footer>
-
-</div>
-
-<script>
-const CHART_FONT = "'IBM Plex Mono', monospace";
-const AMBER = '#D4A24C';
-const AMBER_DIM = 'rgba(212,162,76,0.15)';
-const BLUE = '#7C97B8';
-const BLUE_DIM = 'rgba(124,151,184,0.15)';
-const GRID = 'rgba(255,255,255,0.06)';
-const TEXT_DIM = '#93A1B5';
-
-Chart.defaults.font.family = CHART_FONT;
-Chart.defaults.font.size = 11;
-Chart.defaults.color = TEXT_DIM;
-
-function baseOptions(extra) {
-  return Object.assign({
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: { mode: 'index', intersect: false },
-    plugins: {
-      legend: {
-        labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true }
-      },
-      tooltip: { backgroundColor: '#0E141C', borderColor: '#34404F', borderWidth: 1 }
-    },
-    scales: {
-      x: { grid: { color: GRID }, ticks: { maxTicksLimit: 8 } },
-      y: { grid: { color: GRID } }
-    }
-  }, extra || {});
-}
-
-function fmtTime(iso) {
-  const d = new Date(iso);
-  return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric' });
-}
-
-function round(n, d = 1) {
-  const v = parseFloat(n);
-  return isNaN(v) ? null : Math.round(v * Math.pow(10, d)) / Math.pow(10, d);
-}
-
-Papa.parse('weatherxm_data.csv', {
-  download: true,
-  header: true,
-  dynamicTyping: true,
-  skipEmptyLines: true,
-  complete: function(results) {
-    let rows = results.data.filter(r => r.timestamp);
-    if (!rows.length) { showError(); return; }
-
-    rows.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
-
-    const latest = rows[rows.length - 1];
-    renderCurrent(latest);
-
-    const labels = rows.map(r => fmtTime(r.timestamp));
-
-    buildChart('chartTemp', labels, [
-      { label: 'Temperature', data: rows.map(r => round(r.temperature)), borderColor: AMBER, backgroundColor: AMBER_DIM, fill: true, tension: 0.3, pointRadius: 0 },
-      { label: 'Dew point', data: rows.map(r => round(r.dew_point)), borderColor: BLUE, backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, borderDash: [4,3] }
-    ]);
-
-    buildChart('chartHumidity', labels, [
-      { label: 'Humidity', data: rows.map(r => round(r.humidity, 0)), borderColor: BLUE, backgroundColor: BLUE_DIM, fill: true, tension: 0.3, pointRadius: 0 }
-    ]);
-
-    buildChart('chartWind', labels, [
-      { label: 'Wind speed', data: rows.map(r => round(r.wind_speed, 2)), borderColor: AMBER, backgroundColor: 'transparent', tension: 0.3, pointRadius: 0 },
-      { label: 'Gust', data: rows.map(r => round(r.wind_gust, 2)), borderColor: BLUE, backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, borderDash: [4,3] }
-    ]);
-
-    buildChart('chartPressure', labels, [
-      { label: 'Pressure', data: rows.map(r => round(r.pressure, 1)), borderColor: AMBER, backgroundColor: AMBER_DIM, fill: true, tension: 0.3, pointRadius: 0 }
-    ]);
-  },
-  error: function() { showError(); }
-});
-
-function buildChart(canvasId, labels, datasets) {
-  new Chart(document.getElementById(canvasId), {
-    type: 'line',
-    data: { labels, datasets },
-    options: baseOptions()
-  });
-}
-
-function renderCurrent(r) {
-  document.getElementById('panel').style.display = 'block';
-
-  document.getElementById('tempBig').innerHTML =
-    (round(r.temperature, 1) ?? '--') + '<span class="temp-unit">°C</span>';
-  document.getElementById('condLabel').textContent = titleCase(r.icon || '—');
-  document.getElementById('feelsLike').textContent =
-    'feels like ' + (round(r.feels_like, 1) ?? '--') + '°C';
-
-  const d = new Date(r.timestamp);
-  document.getElementById('lastUpdated').textContent =
-    'Last reading: ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
-
-  const stats = [
-    ['Humidity', round(r.humidity, 0), '%'],
-    ['Wind', round(r.wind_speed, 2), 'm/s'],
-    ['Gust', round(r.wind_gust, 2), 'm/s'],
-    ['Pressure', round(r.pressure, 1), 'hPa'],
-    ['UV index', round(r.uv_index, 0), ''],
-    ['Dew point', round(r.dew_point, 1), '°C'],
-    ['Solar', round(r.solar_irradiance, 0), 'W/m²'],
-    ['Rain', round(r.precipitation, 2), 'mm/h'],
-  ];
-
-  const grid = document.getElementById('readoutGrid');
-  grid.innerHTML = stats.map(([label, value, unit]) => `
-    <div class="stat">
-      <div class="label">${label}</div>
-      <div class="value">${value ?? '--'}<span class="unit">${unit}</span></div>
-    </div>
-  `).join('');
-}
-
-function titleCase(s) {
-  return s.replace(/-/g, ' ').replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1));
-}
-
-function showError() {
-  document.getElementById('loadError').style.display = 'block';
-}
-</script>
-
-</body>
-</html>
+    color:
