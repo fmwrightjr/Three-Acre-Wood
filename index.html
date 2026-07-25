@@ -188,6 +188,28 @@
   }
   .chart-card canvas { max-height: 220px; }
 
+  .precip-totals {
+    display: flex;
+    gap: 28px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  .precip-totals .ptot .label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin-bottom: 4px;
+  }
+  .precip-totals .ptot .value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .precip-totals .ptot .value .unit { font-size: 12px; color: var(--text-dim); margin-left: 2px; }
+
   footer {
     margin-top: 64px;
     padding-top: 24px;
@@ -270,12 +292,13 @@
     </div>
 
     <div class="chart-card">
-      <h3>Barometric pressure (mb)</h3>
+      <h3>Barometric pressure (inHg)</h3>
       <canvas id="chartPressure"></canvas>
     </div>
 
     <div class="chart-card">
       <h3>Precipitation (in/h)</h3>
+      <div class="precip-totals" id="precipTotals"></div>
       <canvas id="chartPrecip"></canvas>
     </div>
   </section>
@@ -320,7 +343,7 @@ function baseOptions(extra) {
 
 function fmtTime(iso) {
   const d = new Date(iso);
-  return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric' });
+  return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', hourCycle: 'h23' });
 }
 
 function round(n, d = 1) {
@@ -335,7 +358,7 @@ let charts = {}; // canvasId -> Chart instance
 const cToF = c => (c === null || c === undefined || isNaN(c)) ? null : c * 9 / 5 + 32;
 const msToMph = ms => (ms === null || ms === undefined || isNaN(ms)) ? null : ms * 2.23694;
 const mmToIn = mm => (mm === null || mm === undefined || isNaN(mm)) ? null : mm * 0.0393701;
-// Pressure: hPa and millibars (mb) are numerically identical, no conversion needed.
+const hpaToInHg = h => (h === null || h === undefined || isNaN(h)) ? null : h * 0.0295301;
 
 Papa.parse('weatherxm_data.csv', {
   download: true,
@@ -363,7 +386,7 @@ function renderAll() {
   const dewF = r => round(cToF(r.dew_point));
   const windMph = r => round(msToMph(r.wind_speed), 1);
   const gustMph = r => round(msToMph(r.wind_gust), 1);
-  const pressureMb = r => round(r.pressure, 1);
+  const pressureInHg = r => round(hpaToInHg(r.pressure), 2);
   const precipIn = r => round(mmToIn(r.precipitation), 3);
 
   buildChart('chartTemp', labels, [
@@ -381,12 +404,38 @@ function renderAll() {
   ]);
 
   buildChart('chartPressure', labels, [
-    { label: 'Pressure', data: rows.map(pressureMb), borderColor: AMBER, backgroundColor: AMBER_DIM, fill: true, tension: 0.3, pointRadius: 0 }
+    { label: 'Pressure', data: rows.map(pressureInHg), borderColor: AMBER, backgroundColor: AMBER_DIM, fill: true, tension: 0.3, pointRadius: 0 }
   ]);
 
   buildChart('chartPrecip', labels, [
     { label: 'Precipitation', data: rows.map(precipIn), borderColor: BLUE, backgroundColor: BLUE_DIM, fill: true, tension: 0.2, pointRadius: 0 }
   ]);
+
+  renderPrecipTotals(rows);
+}
+
+function sumPrecipMm(rows, hoursBack, nowMs) {
+  const cutoff = nowMs - hoursBack * 3600 * 1000;
+  return rows
+    .filter(r => new Date(r.timestamp).getTime() >= cutoff)
+    .reduce((sum, r) => sum + (parseFloat(r.precipitation) || 0), 0);
+}
+
+function renderPrecipTotals(rows) {
+  const nowMs = new Date(rows[rows.length - 1].timestamp).getTime();
+  const totals = [
+    ['Today', sumPrecipMm(rows, 24, nowMs)],
+    ['This week', sumPrecipMm(rows, 24 * 7, nowMs)],
+    ['This month', sumPrecipMm(rows, 24 * 30, nowMs)],
+  ];
+
+  const el = document.getElementById('precipTotals');
+  el.innerHTML = totals.map(([label, mm]) => `
+    <div class="ptot">
+      <div class="label">${label}</div>
+      <div class="value">${round(mmToIn(mm), 2) ?? '--'}<span class="unit">in</span></div>
+    </div>
+  `).join('');
 }
 
 function buildChart(canvasId, labels, datasets) {
@@ -419,13 +468,13 @@ function renderCurrent(r) {
 
   const d = new Date(r.timestamp);
   document.getElementById('lastUpdated').textContent =
-    'Last reading: ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+    'Last reading: ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short', hourCycle: 'h23' });
 
   const stats = [
     ['Humidity', round(r.humidity, 0), '%'],
     ['Wind', round(msToMph(r.wind_speed), 1), 'mph'],
     ['Gust', round(msToMph(r.wind_gust), 1), 'mph'],
-    ['Pressure', round(r.pressure, 1), 'mb'],
+    ['Pressure', round(hpaToInHg(r.pressure), 2), 'inHg'],
     ['UV index', round(r.uv_index, 0), ''],
     ['Dew point', `${dewF ?? '--'} (${dewC ?? '--'}°C)`, '°F'],
     ['Solar', round(r.solar_irradiance, 0), 'W/m²'],
