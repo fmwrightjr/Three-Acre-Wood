@@ -416,9 +416,20 @@ function renderAll() {
 
 function sumPrecipMm(rows, hoursBack, nowMs) {
   const cutoff = nowMs - hoursBack * 3600 * 1000;
-  return rows
-    .filter(r => new Date(r.timestamp).getTime() >= cutoff)
-    .reduce((sum, r) => sum + (parseFloat(r.precipitation) || 0), 0);
+  const inRange = rows.filter(r => new Date(r.timestamp).getTime() >= cutoff);
+
+  // The station reports a running daily total (precipitation_accumulated)
+  // that resets each day, so we take the max value seen per calendar day
+  // and sum those — this is accurate, unlike summing hourly rates.
+  const perDayMax = {};
+  inRange.forEach(r => {
+    const dayKey = new Date(r.timestamp).toISOString().slice(0, 10);
+    const acc = parseFloat(r.precipitation_accumulated);
+    if (!isNaN(acc)) {
+      perDayMax[dayKey] = Math.max(perDayMax[dayKey] || 0, acc);
+    }
+  });
+  return Object.values(perDayMax).reduce((sum, v) => sum + v, 0);
 }
 
 function renderPrecipTotals(rows) {
