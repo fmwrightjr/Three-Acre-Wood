@@ -2,8 +2,8 @@ name: Update WeatherXM data
 
 on:
   schedule:
-    # Runs at minute 0 past every 3rd hour (UTC time)
-    - cron: '0 */3 * * *'
+    # Runs at minute 0 of every hour (UTC time)
+    - cron: '0 * * * *'
   workflow_dispatch: {}  # lets you also trigger it manually from GitHub's website
 
 permissions:
