@@ -194,4 +194,261 @@
     border-top: 1px solid var(--hairline);
     font-family: 'IBM Plex Mono', monospace;
     font-size: 11px;
-    color:
+    color: var(--text-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  #loadError {
+    display: none;
+    background: var(--panel-inset);
+    border: 1px solid var(--hairline);
+    border-radius: 6px;
+    padding: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div>
+      <p class="eyebrow">Personal weather station · WeatherXM M5</p>
+      <h1>Three Acre Wood</h1>
+      <p class="location-sub">38.32°N, 78.48°W · Greene County · Blue Ridge foothills</p>
+    </div>
+    <div class="status">
+      <div><span class="dot"></span>Station online</div>
+      <div class="updated" id="lastUpdated">Loading last reading…</div>
+    </div>
+  </header>
+
+  <div id="loadError">
+    Couldn't load <code>weatherxm_data.csv</code>. If you're viewing this file
+    directly from your Desktop, that's expected — browsers block local file
+    loading for security. Open the published GitHub Pages link instead, and
+    make sure <code>weatherxm_data.csv</code> is sitting in the same folder
+    as this page in your repository.
+  </div>
+
+  <div class="panel" id="panel" style="display:none;">
+    <div class="readout-main">
+      <div class="temp-big" id="tempBig">--<span class="temp-unit">°F</span></div>
+      <div class="condition-block">
+        <div class="cond" id="condLabel">—</div>
+        <div class="feels" id="feelsLike">feels like —°F</div>
+      </div>
+    </div>
+    <div class="readout-grid" id="readoutGrid"></div>
+  </div>
+
+  <section class="history">
+    <div class="section-head">
+      <h2>Field trace</h2>
+      <p>Hourly readings pulled from the station's own record</p>
+    </div>
+
+    <div class="chart-card">
+      <h3>Temperature &amp; dew point (°F)</h3>
+      <canvas id="chartTemp"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Humidity (%)</h3>
+      <canvas id="chartHumidity"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Wind speed &amp; gust (mph)</h3>
+      <canvas id="chartWind"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Barometric pressure (mb)</h3>
+      <canvas id="chartPressure"></canvas>
+    </div>
+
+    <div class="chart-card">
+      <h3>Precipitation (in/h)</h3>
+      <canvas id="chartPrecip"></canvas>
+    </div>
+  </section>
+
+  <footer>
+    <span>Uneven Fawn Anemometer · Model M5 · claimed Aug 2023</span>
+    <span>Data via WeatherXM · updated manually from station export</span>
+  </footer>
+
+</div>
+
+<script>
+const CHART_FONT = "'IBM Plex Mono', monospace";
+const AMBER = '#D4A24C';
+const AMBER_DIM = 'rgba(212,162,76,0.15)';
+const BLUE = '#7C97B8';
+const BLUE_DIM = 'rgba(124,151,184,0.15)';
+const GRID = 'rgba(255,255,255,0.06)';
+const TEXT_DIM = '#93A1B5';
+
+Chart.defaults.font.family = CHART_FONT;
+Chart.defaults.font.size = 11;
+Chart.defaults.color = TEXT_DIM;
+
+function baseOptions(extra) {
+  return Object.assign({
+    responsive: true,
+    maintainAspectRatio: false,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        labels: { boxWidth: 10, boxHeight: 10, usePointStyle: true }
+      },
+      tooltip: { backgroundColor: '#0E141C', borderColor: '#34404F', borderWidth: 1 }
+    },
+    scales: {
+      x: { grid: { color: GRID }, ticks: { maxTicksLimit: 8 } },
+      y: { grid: { color: GRID } }
+    }
+  }, extra || {});
+}
+
+function fmtTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric' });
+}
+
+function round(n, d = 1) {
+  const v = parseFloat(n);
+  return isNaN(v) ? null : Math.round(v * Math.pow(10, d)) / Math.pow(10, d);
+}
+
+// ---- Unit conversion (fixed: US units, with C shown alongside F) ----
+let allRows = [];
+let charts = {}; // canvasId -> Chart instance
+
+const cToF = c => (c === null || c === undefined || isNaN(c)) ? null : c * 9 / 5 + 32;
+const msToMph = ms => (ms === null || ms === undefined || isNaN(ms)) ? null : ms * 2.23694;
+const mmToIn = mm => (mm === null || mm === undefined || isNaN(mm)) ? null : mm * 0.0393701;
+// Pressure: hPa and millibars (mb) are numerically identical, no conversion needed.
+
+Papa.parse('weatherxm_data.csv', {
+  download: true,
+  header: true,
+  dynamicTyping: true,
+  skipEmptyLines: true,
+  complete: function(results) {
+    let rows = results.data.filter(r => r.timestamp);
+    if (!rows.length) { showError(); return; }
+    rows.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+    allRows = rows;
+    renderAll();
+  },
+  error: function() { showError(); }
+});
+
+function renderAll() {
+  const rows = allRows;
+  const latest = rows[rows.length - 1];
+  renderCurrent(latest);
+
+  const labels = rows.map(r => fmtTime(r.timestamp));
+
+  const tempF = r => round(cToF(r.temperature));
+  const dewF = r => round(cToF(r.dew_point));
+  const windMph = r => round(msToMph(r.wind_speed), 1);
+  const gustMph = r => round(msToMph(r.wind_gust), 1);
+  const pressureMb = r => round(r.pressure, 1);
+  const precipIn = r => round(mmToIn(r.precipitation), 3);
+
+  buildChart('chartTemp', labels, [
+    { label: 'Temperature', data: rows.map(tempF), borderColor: AMBER, backgroundColor: AMBER_DIM, fill: true, tension: 0.3, pointRadius: 0 },
+    { label: 'Dew point', data: rows.map(dewF), borderColor: BLUE, backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, borderDash: [4,3] }
+  ]);
+
+  buildChart('chartHumidity', labels, [
+    { label: 'Humidity', data: rows.map(r => round(r.humidity, 0)), borderColor: BLUE, backgroundColor: BLUE_DIM, fill: true, tension: 0.3, pointRadius: 0 }
+  ]);
+
+  buildChart('chartWind', labels, [
+    { label: 'Wind speed', data: rows.map(windMph), borderColor: AMBER, backgroundColor: 'transparent', tension: 0.3, pointRadius: 0 },
+    { label: 'Gust', data: rows.map(gustMph), borderColor: BLUE, backgroundColor: 'transparent', tension: 0.3, pointRadius: 0, borderDash: [4,3] }
+  ]);
+
+  buildChart('chartPressure', labels, [
+    { label: 'Pressure', data: rows.map(pressureMb), borderColor: AMBER, backgroundColor: AMBER_DIM, fill: true, tension: 0.3, pointRadius: 0 }
+  ]);
+
+  buildChart('chartPrecip', labels, [
+    { label: 'Precipitation', data: rows.map(precipIn), borderColor: BLUE, backgroundColor: BLUE_DIM, fill: true, tension: 0.2, pointRadius: 0 }
+  ]);
+}
+
+function buildChart(canvasId, labels, datasets) {
+  if (charts[canvasId]) {
+    charts[canvasId].destroy();
+  }
+  charts[canvasId] = new Chart(document.getElementById(canvasId), {
+    type: 'line',
+    data: { labels, datasets },
+    options: baseOptions()
+  });
+}
+
+function renderCurrent(r) {
+  document.getElementById('panel').style.display = 'block';
+
+  const tempF = round(cToF(r.temperature), 1);
+  const tempC = round(r.temperature, 1);
+  const feelsF = round(cToF(r.feels_like), 1);
+  const feelsC = round(r.feels_like, 1);
+  const dewF = round(cToF(r.dew_point), 1);
+  const dewC = round(r.dew_point, 1);
+
+  document.getElementById('tempBig').innerHTML =
+    (tempF ?? '--') + '<span class="temp-unit">°F</span>' +
+    `<span class="temp-secondary">${tempC ?? '--'}°C</span>`;
+  document.getElementById('condLabel').textContent = titleCase(r.icon || '—');
+  document.getElementById('feelsLike').textContent =
+    `feels like ${feelsF ?? '--'}°F (${feelsC ?? '--'}°C)`;
+
+  const d = new Date(r.timestamp);
+  document.getElementById('lastUpdated').textContent =
+    'Last reading: ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+
+  const stats = [
+    ['Humidity', round(r.humidity, 0), '%'],
+    ['Wind', round(msToMph(r.wind_speed), 1), 'mph'],
+    ['Gust', round(msToMph(r.wind_gust), 1), 'mph'],
+    ['Pressure', round(r.pressure, 1), 'mb'],
+    ['UV index', round(r.uv_index, 0), ''],
+    ['Dew point', `${dewF ?? '--'} (${dewC ?? '--'}°C)`, '°F'],
+    ['Solar', round(r.solar_irradiance, 0), 'W/m²'],
+    ['Rain', round(mmToIn(r.precipitation), 3), 'in/h'],
+  ];
+
+  const grid = document.getElementById('readoutGrid');
+  grid.innerHTML = stats.map(([label, value, unit]) => `
+    <div class="stat">
+      <div class="label">${label}</div>
+      <div class="value">${value ?? '--'}<span class="unit">${unit}</span></div>
+    </div>
+  `).join('');
+}
+
+function titleCase(s) {
+  return s.replace(/-/g, ' ').replace(/\w\S*/g, t => t.charAt(0).toUpperCase() + t.slice(1));
+}
+
+function showError() {
+  document.getElementById('loadError').style.display = 'block';
+}
+</script>
+
+</body>
+</html>
