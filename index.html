@@ -426,7 +426,7 @@ function renderUkStation(device) {
     ['Condition', titleCase(String(icon)), ''],
     ['Humidity', humidity ?? '--', '%'],
     ['Wind', !isNaN(windMs) ? round(msToMph(windMs), 1) : '--', 'mph'],
-    ['Pressure', !isNaN(pressureHpa) ? round(pressureHpa, 1) : '--', 'mb'],
+    ['Pressure', !isNaN(pressureHpa) ? round(hpaToInHg(pressureHpa), 2) : '--', 'inHg'],
   ];
   document.getElementById('ukReadoutGrid').innerHTML = stats.map(([label, value, unit]) => `
     <div class="stat">
