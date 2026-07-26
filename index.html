@@ -510,7 +510,7 @@ function renderCurrent(r) {
   document.getElementById('lastUpdated').textContent =
     'Last reading: ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short', hourCycle: 'h23' });
   document.getElementById('stationTime').textContent =
-    'Time at station: ' + d.toLocaleString('en-US', { timeStyle: 'short', hourCycle: 'h23', timeZone: 'America/New_York', timeZoneName: 'short' });
+    'Time at station: ' + d.toLocaleString('en-US', { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'America/New_York', timeZoneName: 'short' });
 
   const stats = [
     ['Humidity', round(r.humidity, 0), '%'],
