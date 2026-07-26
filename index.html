@@ -66,11 +66,26 @@
     line-height: 1.05;
   }
 
+  .location-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .location-thumb {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    object-fit: cover;
+    box-shadow: 0 2px 6px rgba(43,38,32,0.25);
+  }
+
   .location-sub {
     font-family: 'IBM Plex Mono', monospace;
     color: var(--text-dim);
     font-size: 13px;
-    margin-top: 10px;
+    margin: 0;
   }
 
   .status {
@@ -254,7 +269,10 @@
     <div>
       <p class="eyebrow">Personal weather station · WeatherXM M5</p>
       <h1>Three Acre Wood</h1>
-      <p class="location-sub">38.32°N, 78.48°W · Greene County · Blue Ridge foothills</p>
+      <div class="location-line">
+        <img src="hero-bg.jpg" alt="View from Three Acre Wood" class="location-thumb">
+        <p class="location-sub">38.32°N, 78.48°W · Greene County · Blue Ridge foothills</p>
+      </div>
     </div>
     <div class="status">
       <div><span class="dot"></span>Station online</div>
