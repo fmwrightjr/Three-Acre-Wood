@@ -191,7 +191,9 @@
   .precip-totals {
     display: flex;
     gap: 28px;
-    margin-bottom: 18px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--hairline);
     flex-wrap: wrap;
   }
   .precip-totals .ptot .label {
@@ -297,8 +299,9 @@
     </div>
 
     <div class="chart-card">
-      <h3>Precipitation (in/h)</h3>
+      <h3>Precipitation totals (in)</h3>
       <div class="precip-totals" id="precipTotals"></div>
+      <h3 style="margin-top: 4px;">Precipitation rate (in/h)</h3>
       <canvas id="chartPrecip"></canvas>
     </div>
   </section>
