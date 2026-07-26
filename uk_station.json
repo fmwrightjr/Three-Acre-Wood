@@ -1,0 +1,46 @@
+{
+  "id": "cbb1fe80-96aa-11ed-9972-4f669f2d96bd",
+  "cellIndex": "8719432c6ffffff",
+  "cellActiveDeviceCount": 1,
+  "cellAvgDataQuality": 88,
+  "cellCenter": {
+    "lat": 52.25354,
+    "lon": -0.26466
+  },
+  "address": "-",
+  "name": "Acrobatic Navy Ozone",
+  "bundle": {
+    "name": "h1",
+    "title": "H1",
+    "connectivity": "helium",
+    "url": "https://docs.weatherxm.com/wxm-devices/helium/introduction",
+    "ws_model": "WS2000",
+    "gw_model": "WS2000"
+  },
+  "profile": "H1",
+  "metrics": {
+    "qod_score": 88,
+    "ts": "2026-07-24T01:00:00+01:00"
+  },
+  "timezone": "Europe/London",
+  "programName": "community",
+  "cellCapacity": 2,
+  "isActive": true,
+  "lastWeatherStationActivity": "2026-07-26T13:15:12+01:00",
+  "current_weather": {
+    "timestamp": "2026-07-26T13:15:12+01:00",
+    "temperature": 24,
+    "humidity": 52,
+    "wind_speed": 1.9,
+    "wind_gust": 7.1,
+    "wind_direction": 302,
+    "solar_irradiance": 394.26229508196724,
+    "uv_index": 2,
+    "precipitation": 0,
+    "pressure": 1001.7,
+    "icon": "partly-cloudy-day",
+    "precipitation_accumulated": 0,
+    "dew_point": 13.540243701012598,
+    "feels_like": 24
+  }
+}
