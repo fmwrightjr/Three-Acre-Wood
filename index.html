@@ -419,38 +419,44 @@ function renderAll() {
   renderPrecipTotals(rows);
 }
 
-// Running total of precipitation rate (mm/h) that resets at each local
-// calendar day boundary — since readings are ~hourly, summing the rate
-// approximates accumulated rainfall for that day.
+// Uses the station's own running daily total (precipitation_accumulated),
+// which resets at local midnight (Eastern time, matching the station).
 function computeDailyCumulative(rows) {
-  let cumulative = [];
-  let runningTotal = 0;
-  let currentDay = null;
-  rows.forEach(r => {
-    const dayKey = new Date(r.timestamp).toLocaleDateString('en-CA'); // local date, YYYY-MM-DD
-    if (dayKey !== currentDay) {
-      currentDay = dayKey;
-      runningTotal = 0;
-    }
-    runningTotal += parseFloat(r.precipitation) || 0;
-    cumulative.push(runningTotal);
-  });
-  return cumulative;
+  return rows.map(r => parseFloat(r.precipitation_accumulated) || 0);
 }
 
-function sumPrecipMm(rows, hoursBack, nowMs) {
-  const cutoff = nowMs - hoursBack * 3600 * 1000;
-  return rows
-    .filter(r => new Date(r.timestamp).getTime() >= cutoff)
-    .reduce((sum, r) => sum + (parseFloat(r.precipitation) || 0), 0);
+function sumPrecipMm(rows, daysBack, nowMs) {
+  const dayKeys = [];
+  for (let i = 0; i < daysBack; i++) {
+    const d = new Date(nowMs - i * 24 * 3600 * 1000);
+    dayKeys.push(d.toLocaleDateString('en-CA', { timeZone: 'America/New_York' }));
+  }
+  const perDayMax = {};
+  rows.forEach(r => {
+    const dayKey = new Date(r.timestamp).toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+    if (dayKeys.includes(dayKey)) {
+      const acc = parseFloat(r.precipitation_accumulated);
+      if (!isNaN(acc)) perDayMax[dayKey] = Math.max(perDayMax[dayKey] || 0, acc);
+    }
+  });
+  return Object.values(perDayMax).reduce((sum, v) => sum + v, 0);
+}
+
+function sumPrecipToday(rows, nowMs) {
+  const todayKey = new Date(nowMs).toLocaleDateString('en-CA', { timeZone: 'America/New_York' });
+  const todaysRows = rows.filter(r =>
+    new Date(r.timestamp).toLocaleDateString('en-CA', { timeZone: 'America/New_York' }) === todayKey
+  );
+  const values = todaysRows.map(r => parseFloat(r.precipitation_accumulated)).filter(v => !isNaN(v));
+  return values.length ? Math.max(...values) : 0;
 }
 
 function renderPrecipTotals(rows) {
   const nowMs = new Date(rows[rows.length - 1].timestamp).getTime();
   const totals = [
-    ['Today', sumPrecipMm(rows, 24, nowMs)],
-    ['This week', sumPrecipMm(rows, 24 * 7, nowMs)],
-    ['This month', sumPrecipMm(rows, 24 * 30, nowMs)],
+    ['Today', sumPrecipToday(rows, nowMs)],
+    ['This week', sumPrecipMm(rows, 7, nowMs)],
+    ['This month', sumPrecipMm(rows, 30, nowMs)],
   ];
 
   const el = document.getElementById('precipTotals');
