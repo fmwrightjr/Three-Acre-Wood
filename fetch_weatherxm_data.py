@@ -23,6 +23,7 @@ duplicate rows you already have).
 
 import requests
 import csv
+import json
 import os
 import getpass
 from datetime import date, timedelta
@@ -31,6 +32,13 @@ BASE_URL = "https://api.weatherxm.com/api/v1"
 DEVICE_ID = "39a1f050-1e04-11ed-960f-d7d4cf200cc9"  # Uneven Fawn Anemometer (Stanardsville)
 CSV_FILE = "weatherxm_data.csv"
 DAYS_TO_FETCH = 7  # WeatherXM only keeps ~7 days of history available
+
+# A second, public station we just display current conditions for (no
+# login needed — this uses WeatherXM's public "cell" lookup, not the
+# owner-only history endpoint).
+UK_DEVICE_ID = "cbb1fe80-96aa-11ed-9972-4f669f2d96bd"  # Acrobatic Navy Ozone, Huntingdon UK
+UK_CELL_INDEX = "8719432c6ffffff"
+UK_STATION_FILE = "uk_station.json"
 
 
 def login():
@@ -78,6 +86,25 @@ def fetch_day(token: str, day: date):
         elif isinstance(day_record, dict):
             readings.append(day_record)
     return readings
+
+
+def fetch_uk_station():
+    """Fetch current conditions for the public UK station (no login needed)."""
+    url = f"{BASE_URL}/cells/{UK_CELL_INDEX}/devices"
+    response = requests.get(url, timeout=30)
+
+    if response.status_code != 200:
+        print(f"  -> UK station fetch failed: {response.status_code} {response.text[:200]}")
+        return None
+
+    data = response.json()
+    devices = data if isinstance(data, list) else data.get("devices", [])
+    for d in devices:
+        if isinstance(d, dict) and d.get("id") == UK_DEVICE_ID:
+            return d
+
+    print("  -> UK station not found in cell response.")
+    return None
 
 
 def load_existing_rows():
@@ -129,6 +156,15 @@ def main():
         writer.writerows(new_rows)
 
     print(f"\nDone. Added {len(new_rows)} new rows. Total rows in {CSV_FILE}: {len(existing_rows) + len(new_rows)}.")
+
+    print("\nFetching UK comparison station (Acrobatic Navy Ozone)...")
+    uk_data = fetch_uk_station()
+    if uk_data:
+        with open(UK_STATION_FILE, "w") as f:
+            json.dump(uk_data, f, indent=2)
+        print(f"Saved UK station data to {UK_STATION_FILE}.")
+    else:
+        print("Could not fetch UK station data this run — leaving previous file as-is.")
 
 
 if __name__ == "__main__":

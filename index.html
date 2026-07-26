@@ -282,6 +282,11 @@
     <div class="readout-grid" id="readoutGrid"></div>
   </div>
 
+  <div class="chart-card" id="ukCard" style="margin-top: 20px; display: none;">
+    <h3>Also watching: Acrobatic Navy Ozone · Huntingdon, UK</h3>
+    <div class="readout-grid" id="ukReadoutGrid"></div>
+  </div>
+
   <section class="history">
     <div class="section-head">
       <h2>Field trace</h2>
@@ -387,6 +392,49 @@ Papa.parse('weatherxm_data.csv', {
   },
   error: function() { showError(); }
 });
+
+// Second, public station (current conditions only, no history/charts).
+fetch('uk_station.json')
+  .then(res => res.ok ? res.json() : null)
+  .then(device => { if (device) renderUkStation(device); })
+  .catch(() => {}); // quietly skip if unavailable — main station still works
+
+function renderUkStation(device) {
+  // The exact shape of this public endpoint's weather data wasn't
+  // confirmed ahead of time, so this checks a few likely locations.
+  const w = device.current_weather || device.weather || device.observation || device;
+  if (!w || typeof w !== 'object') return;
+
+  const get = (...keys) => {
+    for (const k of keys) {
+      if (w[k] !== undefined && w[k] !== null) return w[k];
+    }
+    return null;
+  };
+
+  const tempC = parseFloat(get('temperature', 'temp'));
+  const humidity = get('humidity');
+  const windMs = parseFloat(get('wind_speed', 'windSpeed'));
+  const pressureHpa = parseFloat(get('pressure'));
+  const icon = get('icon', 'condition') || '—';
+
+  if (isNaN(tempC) && humidity === null && isNaN(windMs)) return; // nothing usable found
+
+  document.getElementById('ukCard').style.display = 'block';
+  const stats = [
+    ['Temperature', !isNaN(tempC) ? `${round(cToF(tempC),1)}°F (${round(tempC,1)}°C)` : '--', ''],
+    ['Condition', titleCase(String(icon)), ''],
+    ['Humidity', humidity ?? '--', '%'],
+    ['Wind', !isNaN(windMs) ? round(msToMph(windMs), 1) : '--', 'mph'],
+    ['Pressure', !isNaN(pressureHpa) ? round(pressureHpa, 1) : '--', 'mb'],
+  ];
+  document.getElementById('ukReadoutGrid').innerHTML = stats.map(([label, value, unit]) => `
+    <div class="stat">
+      <div class="label">${label}</div>
+      <div class="value">${value}<span class="unit">${unit}</span></div>
+    </div>
+  `).join('');
+}
 
 function renderAll() {
   const rows = allRows;
