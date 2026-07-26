@@ -41,12 +41,24 @@
   header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     flex-wrap: wrap;
-    gap: 16px;
+    gap: 20px;
     border-bottom: 1px solid var(--hairline);
     padding-bottom: 28px;
     margin-bottom: 40px;
+  }
+
+  .header-photo {
+    flex: 1 1 240px;
+    max-width: 420px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px -8px rgba(43,38,32,0.3);
+  }
+  @media (max-width: 720px) {
+    .header-photo { display: none; }
   }
 
   .eyebrow {
@@ -66,26 +78,11 @@
     line-height: 1.05;
   }
 
-  .location-line {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 10px;
-  }
-
-  .location-thumb {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
-    object-fit: cover;
-    box-shadow: 0 2px 6px rgba(43,38,32,0.25);
-  }
-
   .location-sub {
     font-family: 'IBM Plex Mono', monospace;
     color: var(--text-dim);
     font-size: 13px;
-    margin: 0;
+    margin-top: 10px;
   }
 
   .status {
@@ -269,11 +266,9 @@
     <div>
       <p class="eyebrow">Personal weather station · WeatherXM M5</p>
       <h1>Three Acre Wood</h1>
-      <div class="location-line">
-        <img src="hero-bg.jpg" alt="View from Three Acre Wood" class="location-thumb">
-        <p class="location-sub">38.32°N, 78.48°W · Greene County · Blue Ridge foothills</p>
-      </div>
+      <p class="location-sub">38.32°N, 78.48°W · Greene County · Blue Ridge foothills</p>
     </div>
+    <img src="hero-bg.jpg" alt="View from Three Acre Wood" class="header-photo">
     <div class="status">
       <div><span class="dot"></span>Station online</div>
       <div class="updated" id="lastUpdated">Loading last reading…</div>
