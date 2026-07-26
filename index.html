@@ -201,7 +201,12 @@
     margin: 0 0 16px;
     font-weight: 500;
   }
-  .chart-card canvas { max-height: 220px; }
+  .chart-card canvas { display: block; }
+  .chart-canvas-wrap {
+    position: relative;
+    height: 220px;
+    width: 100%;
+  }
 
   .precip-totals {
     display: flex;
@@ -297,29 +302,29 @@
 
     <div class="chart-card">
       <h3>Temperature &amp; dew point (°F)</h3>
-      <canvas id="chartTemp"></canvas>
+      <div class="chart-canvas-wrap"><canvas id="chartTemp"></canvas></div>
     </div>
 
     <div class="chart-card">
       <h3>Humidity (%)</h3>
-      <canvas id="chartHumidity"></canvas>
+      <div class="chart-canvas-wrap"><canvas id="chartHumidity"></canvas></div>
     </div>
 
     <div class="chart-card">
       <h3>Wind speed &amp; gust (mph)</h3>
-      <canvas id="chartWind"></canvas>
+      <div class="chart-canvas-wrap"><canvas id="chartWind"></canvas></div>
     </div>
 
     <div class="chart-card">
       <h3>Barometric pressure (inHg)</h3>
-      <canvas id="chartPressure"></canvas>
+      <div class="chart-canvas-wrap"><canvas id="chartPressure"></canvas></div>
     </div>
 
     <div class="chart-card">
       <h3>Precipitation totals (in)</h3>
       <div class="precip-totals" id="precipTotals"></div>
       <h3 style="margin-top: 4px;">Precipitation accumulation (in, resets daily)</h3>
-      <canvas id="chartPrecip"></canvas>
+      <div class="chart-canvas-wrap"><canvas id="chartPrecip"></canvas></div>
     </div>
   </section>
 
