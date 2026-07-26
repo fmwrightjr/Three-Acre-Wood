@@ -25,12 +25,22 @@
 
   * { box-sizing: border-box; }
 
+  html, body { height: 100%; }
+
   body {
     margin: 0;
-    background: var(--bg);
     color: var(--text);
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
+    background-color: var(--bg-deep);
+    background-image:
+      linear-gradient(180deg, rgba(10,13,18,0.72) 0%, rgba(14,18,25,0.55) 35%, rgba(10,13,18,0.82) 100%),
+      url('hero-bg.jpg');
+    background-size: cover;
+    background-position: center 30%;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
   }
 
   .wrap { max-width: 980px; margin: 0 auto; padding: 48px 24px 96px; }
@@ -41,9 +51,10 @@
     align-items: flex-end;
     flex-wrap: wrap;
     gap: 16px;
-    border-bottom: 1px solid var(--hairline);
+    border-bottom: 1px solid rgba(255,255,255,0.18);
     padding-bottom: 28px;
     margin-bottom: 40px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.55);
   }
 
   .eyebrow {
@@ -98,11 +109,13 @@
 
   /* Instrument panel */
   .panel {
-    background: var(--panel);
-    border: 1px solid var(--hairline);
-    border-radius: 6px;
+    background: rgba(27, 34, 45, 0.55);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
     padding: 36px 32px;
-    box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 20px 40px -20px rgba(0,0,0,0.5);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 20px 50px -20px rgba(0,0,0,0.6);
   }
 
   .readout-main {
@@ -171,9 +184,11 @@
   }
 
   .chart-card {
-    background: var(--panel);
-    border: 1px solid var(--hairline);
-    border-radius: 6px;
+    background: rgba(27, 34, 45, 0.55);
+    backdrop-filter: blur(14px) saturate(120%);
+    -webkit-backdrop-filter: blur(14px) saturate(120%);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
     padding: 24px 20px;
     margin-bottom: 20px;
   }
@@ -227,9 +242,10 @@
 
   #loadError {
     display: none;
-    background: var(--panel-inset);
-    border: 1px solid var(--hairline);
-    border-radius: 6px;
+    background: rgba(27, 34, 45, 0.65);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 10px;
     padding: 20px;
     font-family: 'IBM Plex Mono', monospace;
     font-size: 13px;
@@ -250,6 +266,7 @@
     <div class="status">
       <div><span class="dot"></span>Station online</div>
       <div class="updated" id="lastUpdated">Loading last reading…</div>
+      <div class="updated" id="stationTime"></div>
     </div>
   </header>
 
@@ -499,6 +516,8 @@ function renderCurrent(r) {
   const d = new Date(r.timestamp);
   document.getElementById('lastUpdated').textContent =
     'Last reading: ' + d.toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short', hourCycle: 'h23' });
+  document.getElementById('stationTime').textContent =
+    'Time at station: ' + d.toLocaleString('en-US', { timeStyle: 'short', hourCycle: 'h23', timeZone: 'America/New_York', timeZoneName: 'short' });
 
   const stats = [
     ['Humidity', round(r.humidity, 0), '%'],
