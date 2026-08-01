@@ -20,27 +20,27 @@
   "profile": "H1",
   "metrics": {
     "qod_score": 93,
-    "ts": "2026-07-27T01:00:00+01:00"
+    "ts": "2026-07-30T01:00:00+01:00"
   },
   "timezone": "Europe/London",
   "programName": "community",
   "cellCapacity": 2,
   "isActive": true,
-  "lastWeatherStationActivity": "2026-08-01T17:05:24+01:00",
+  "lastWeatherStationActivity": "2026-08-01T18:57:17+01:00",
   "current_weather": {
-    "timestamp": "2026-08-01T17:05:24+01:00",
-    "temperature": 24.2,
+    "timestamp": "2026-08-01T18:57:17+01:00",
+    "temperature": 23.8,
     "humidity": 34,
-    "wind_speed": 0.5,
-    "wind_gust": 1,
-    "wind_direction": 298,
-    "solar_irradiance": 119.72950819672131,
+    "wind_speed": 1.2,
+    "wind_gust": 3.1,
+    "wind_direction": 265,
+    "solar_irradiance": 52.15573770491803,
     "uv_index": 0,
     "precipitation": 0,
-    "pressure": 1016.3,
+    "pressure": 1016.1,
     "icon": "partly-cloudy-day",
     "precipitation_accumulated": 0,
-    "dew_point": 7.347946599509309,
-    "feels_like": 24.2
+    "dew_point": 6.996770544507415,
+    "feels_like": 23.8
   }
 }
