@@ -26,21 +26,21 @@
   "programName": "community",
   "cellCapacity": 2,
   "isActive": true,
-  "lastWeatherStationActivity": "2026-08-15T03:47:55+01:00",
+  "lastWeatherStationActivity": "2026-08-15T04:33:58+01:00",
   "current_weather": {
-    "timestamp": "2026-08-15T03:47:55+01:00",
-    "temperature": 20.1,
-    "humidity": 62,
-    "wind_speed": 1,
-    "wind_gust": 2.3,
-    "wind_direction": 330,
+    "timestamp": "2026-08-15T04:33:58+01:00",
+    "temperature": 19.5,
+    "humidity": 66,
+    "wind_speed": 1.6,
+    "wind_gust": 2.9,
+    "wind_direction": 318,
     "solar_irradiance": 0,
     "uv_index": 0,
     "precipitation": 0,
-    "pressure": 1014.8,
+    "pressure": 1015,
     "icon": "partly-cloudy-night",
     "precipitation_accumulated": 0,
-    "dew_point": 12.593152608189877,
-    "feels_like": 20.1
+    "dew_point": 12.97996974485207,
+    "feels_like": 19.5
   }
 }
