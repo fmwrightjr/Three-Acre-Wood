@@ -25,7 +25,7 @@
   "timezone": "Europe/London",
   "programName": "community",
   "cellCapacity": 2,
-  "isActive": true,
+  "isActive": false,
   "lastWeatherStationActivity": "2026-08-18T08:17:49+01:00",
   "current_weather": {
     "timestamp": "2026-08-18T08:17:49+01:00",
