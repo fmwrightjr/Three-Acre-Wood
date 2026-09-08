@@ -5,7 +5,7 @@
   "cellAvgDataQuality": 96,
   "cellCenter": {
     "lat": 52.25349,
-    "lon": -0.26462
+    "lon": -0.2646
   },
   "address": "-",
   "name": "Acrobatic Navy Ozone",
@@ -26,21 +26,21 @@
   "programName": "community",
   "cellCapacity": 2,
   "isActive": true,
-  "lastWeatherStationActivity": "2026-09-08T05:15:59+01:00",
+  "lastWeatherStationActivity": "2026-09-08T10:20:20+01:00",
   "current_weather": {
-    "timestamp": "2026-09-08T05:15:59+01:00",
-    "temperature": 13.9,
-    "humidity": 93,
-    "wind_speed": 1.8,
-    "wind_gust": 2.8,
-    "wind_direction": 192,
-    "solar_irradiance": 0,
+    "timestamp": "2026-09-08T10:20:20+01:00",
+    "temperature": 14.6,
+    "humidity": 98,
+    "wind_speed": 1.9,
+    "wind_gust": 3,
+    "wind_direction": 216,
+    "solar_irradiance": 88.8688524590164,
     "uv_index": 0,
-    "precipitation": 0,
-    "pressure": 1007.4,
-    "icon": "partly-cloudy-night",
-    "precipitation_accumulated": 0.5079999999999245,
-    "dew_point": 12.786394270624761,
-    "feels_like": 13.9
+    "precipitation": 0.4,
+    "pressure": 1005.1,
+    "icon": "drizzle",
+    "precipitation_accumulated": 4.0639999999999645,
+    "dew_point": 14.28731872423882,
+    "feels_like": 14.6
   }
 }
