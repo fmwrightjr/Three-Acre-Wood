@@ -4,7 +4,7 @@
   "cellActiveDeviceCount": 1,
   "cellAvgDataQuality": 95,
   "cellCenter": {
-    "lat": 52.25354,
+    "lat": 52.25356,
     "lon": -0.26465
   },
   "address": "Little Paxton, GB",
@@ -28,21 +28,21 @@
   "cellCapacity": 2,
   "hasWallet": true,
   "isActive": true,
-  "lastWeatherStationActivity": "2026-10-07T18:15:03+01:00",
+  "lastWeatherStationActivity": "2026-10-07T23:39:54+01:00",
   "current_weather": {
-    "timestamp": "2026-10-07T18:15:03+01:00",
-    "temperature": 12,
-    "humidity": 85,
-    "wind_speed": 1.4,
-    "wind_gust": 3.2,
-    "wind_direction": 4,
-    "solar_irradiance": 11.19672131147541,
+    "timestamp": "2026-10-07T23:39:54+01:00",
+    "temperature": 8.1,
+    "humidity": 90,
+    "wind_speed": 0.2,
+    "wind_gust": 1.2,
+    "wind_direction": 293,
+    "solar_irradiance": 0,
     "uv_index": 0,
     "precipitation": 0,
-    "pressure": 1010.7,
-    "icon": "partly-cloudy-day",
+    "pressure": 1013.3,
+    "icon": "partly-cloudy-night",
     "precipitation_accumulated": 4.572000000000116,
-    "dew_point": 9.555829230804669,
-    "feels_like": 12
+    "dew_point": 6.558198931057804,
+    "feels_like": 8.1
   }
 }
