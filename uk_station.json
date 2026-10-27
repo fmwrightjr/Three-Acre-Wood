@@ -4,8 +4,8 @@
   "cellActiveDeviceCount": 1,
   "cellAvgDataQuality": 87,
   "cellCenter": {
-    "lat": 52.25344,
-    "lon": -0.26464
+    "lat": 52.25353,
+    "lon": -0.26458
   },
   "address": "Little Paxton, GB",
   "name": "Acrobatic Navy Ozone",
@@ -28,21 +28,21 @@
   "cellCapacity": 2,
   "hasWallet": true,
   "isActive": true,
-  "lastWeatherStationActivity": "2026-10-27T19:14:38Z",
+  "lastWeatherStationActivity": "2026-10-27T23:27:49Z",
   "current_weather": {
-    "timestamp": "2026-10-27T19:14:38Z",
-    "temperature": 9.6,
-    "humidity": 85,
-    "wind_speed": 1.9,
-    "wind_gust": 2.8,
+    "timestamp": "2026-10-27T23:27:49Z",
+    "temperature": 7.9,
+    "humidity": 92,
+    "wind_speed": 1.1,
+    "wind_gust": 2,
     "wind_direction": 258,
     "solar_irradiance": 0,
     "uv_index": 0,
     "precipitation": 0,
-    "pressure": 1014.3,
+    "pressure": 1017.7,
     "icon": "partly-cloudy-night",
     "precipitation_accumulated": 2.29,
-    "dew_point": 7.2013971814667155,
-    "feels_like": 8.798244270484938
+    "dew_point": 6.6802046744337265,
+    "feels_like": 7.763062680788126
   }
 }
