@@ -1,8 +1,8 @@
 {
   "id": "cbb1fe80-96aa-11ed-9972-4f669f2d96bd",
   "cellIndex": "8719432c6ffffff",
-  "cellActiveDeviceCount": 0,
-  "cellAvgDataQuality": null,
+  "cellActiveDeviceCount": 1,
+  "cellAvgDataQuality": 91,
   "cellCenter": {
     "lat": 52.25348,
     "lon": -0.26461
@@ -28,21 +28,21 @@
   "cellCapacity": 2,
   "hasWallet": true,
   "isActive": true,
-  "lastWeatherStationActivity": "2026-11-08T00:59:28Z",
+  "lastWeatherStationActivity": "2026-11-08T08:32:49Z",
   "current_weather": {
-    "timestamp": "2026-11-08T00:59:28Z",
-    "temperature": 6.4,
+    "timestamp": "2026-11-08T08:32:49Z",
+    "temperature": 6.5,
     "humidity": 99,
     "wind_speed": 0,
     "wind_gust": 0,
     "wind_direction": 299,
-    "solar_irradiance": 0,
+    "solar_irradiance": 23.10655737704918,
     "uv_index": 0,
     "precipitation": 0,
-    "pressure": 1018.8,
-    "icon": "partly-cloudy-night",
+    "pressure": 1018.4,
+    "icon": "partly-cloudy-day",
     "precipitation_accumulated": 0.25,
-    "dew_point": 6.2541011754911855,
-    "feels_like": 6.4
+    "dew_point": 6.353984205184045,
+    "feels_like": 6.5
   }
 }
