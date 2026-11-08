@@ -20,7 +20,7 @@
   "profile": "H1",
   "metrics": {
     "qod_score": 91,
-    "ts": "2026-11-06T00:00:00Z",
+    "ts": "2026-11-07T00:00:00Z",
     "has_wallet": true
   },
   "timezone": "Europe/London",
@@ -28,21 +28,21 @@
   "cellCapacity": 2,
   "hasWallet": true,
   "isActive": true,
-  "lastWeatherStationActivity": "2026-11-08T15:41:59Z",
+  "lastWeatherStationActivity": "2026-11-08T20:07:56Z",
   "current_weather": {
-    "timestamp": "2026-11-08T15:41:59Z",
-    "temperature": 9.2,
-    "humidity": 95,
+    "timestamp": "2026-11-08T20:07:56Z",
+    "temperature": 3.5,
+    "humidity": 99,
     "wind_speed": 0,
     "wind_gust": 0,
-    "wind_direction": 299,
-    "solar_irradiance": 12.885245901639344,
+    "wind_direction": 300,
+    "solar_irradiance": 0,
     "uv_index": 0,
     "precipitation": 0,
-    "pressure": 1017.8,
-    "icon": "partly-cloudy-day",
+    "pressure": 1018.3,
+    "icon": "partly-cloudy-night",
     "precipitation_accumulated": 0.25,
-    "dew_point": 8.44042292139235,
-    "feels_like": 9.2
+    "dew_point": 3.3574729377142245,
+    "feels_like": 3.5
   }
 }
