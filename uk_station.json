@@ -28,21 +28,21 @@
   "cellCapacity": 2,
   "hasWallet": true,
   "isActive": true,
-  "lastWeatherStationActivity": "2026-11-18T02:03:42Z",
+  "lastWeatherStationActivity": "2026-11-18T10:52:36Z",
   "current_weather": {
-    "timestamp": "2026-11-18T02:03:42Z",
-    "temperature": 8.8,
-    "humidity": 95,
-    "wind_speed": 2.8,
-    "wind_gust": 3.3,
-    "wind_direction": 210,
-    "solar_irradiance": 0,
+    "timestamp": "2026-11-18T10:52:36Z",
+    "temperature": 10.3,
+    "humidity": 91,
+    "wind_speed": 2.7,
+    "wind_gust": 3.7,
+    "wind_direction": 269,
+    "solar_irradiance": 76.93442622950819,
     "uv_index": 0,
     "precipitation": 0,
-    "pressure": 978.4,
-    "icon": "partly-cloudy-night",
+    "pressure": 982.9,
+    "icon": "partly-cloudy-day",
     "precipitation_accumulated": 0,
-    "dew_point": 8.042826456960833,
-    "feels_like": 7.183446243210744
+    "dew_point": 8.894774973384525,
+    "feels_like": 10.3
   }
 }
