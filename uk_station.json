@@ -1,8 +1,8 @@
 {
   "id": "cbb1fe80-96aa-11ed-9972-4f669f2d96bd",
   "cellIndex": "8719432c6ffffff",
-  "cellActiveDeviceCount": 1,
-  "cellAvgDataQuality": 53,
+  "cellActiveDeviceCount": 0,
+  "cellAvgDataQuality": null,
   "cellCenter": {
     "lat": 52.25352,
     "lon": -0.26461
@@ -19,30 +19,30 @@
   },
   "profile": "H1",
   "metrics": {
-    "qod_score": 53,
-    "ts": "2026-11-22T00:00:00Z",
+    "qod_score": 57,
+    "ts": "2026-11-23T00:00:00Z",
     "has_wallet": true
   },
   "timezone": "Europe/London",
   "programName": "community",
   "cellCapacity": 2,
   "hasWallet": true,
-  "isActive": true,
-  "lastWeatherStationActivity": "2026-11-24T15:15:53Z",
+  "isActive": false,
+  "lastWeatherStationActivity": "2026-11-24T22:46:13Z",
   "current_weather": {
-    "timestamp": "2026-11-24T15:15:53Z",
-    "temperature": 4.7,
+    "timestamp": "2026-11-24T22:46:13Z",
+    "temperature": 4.4,
     "humidity": 87,
-    "wind_speed": 1.5,
-    "wind_gust": 3.2,
-    "wind_direction": 243,
-    "solar_irradiance": 31.598360655737704,
+    "wind_speed": 0.2,
+    "wind_gust": 0.9,
+    "wind_direction": 308,
+    "solar_irradiance": 0,
     "uv_index": 0,
     "precipitation": 0,
-    "pressure": 1013.5,
-    "icon": "partly-cloudy-day",
+    "pressure": 1013.4,
+    "icon": "partly-cloudy-night",
     "precipitation_accumulated": 0,
-    "dew_point": 2.7205964655056745,
-    "feels_like": 3.590132086739678
+    "dew_point": 2.4253683632059553,
+    "feels_like": 4.4
   }
 }
